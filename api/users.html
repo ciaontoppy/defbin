@@ -4,6 +4,233 @@
     <title>Users</title>
     <style>
         body {
+                        font-family: Arial, Helvetica, sans-serif;
+            background-color: #121212;
+            color: #e0e0e0;
+            margin: 0;
+            padding: 0;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 10px 0;
+        }
+        header {
+            background-color: #000;
+            padding: 10px 0;
+            border-bottom: 1px solid #333;
+        }
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .nav-links a {
+            color: #e0e0e0;
+            text-decoration: none;
+            margin-left: 15px;
+            font-weight: bold;
+        }
+        .nav-links a:hover {
+            color: #fff;
+        }
+        .search-box {
+            margin: 15px 0;
+            padding: 5px;
+        }
+        .search-box input {
+            width: 300px;
+            padding: 5px;
+            background-color: #222;
+            color: #e0e0e0;
+            border: 1px solid #333;
+        }
+        .search-box button {
+            padding: 5px 10px;
+            background-color: #333;
+            color: #e0e0e0;
+            border: 1px solid #444;
+            cursor: pointer;
+        }
+        .search-box button:hover {
+            background-color: #444;
+        }
+        .pagination {
+            margin: 15px 0;
+            text-align: center;
+        }
+        .pagination a {
+            display: inline-block;
+            padding: 3px 8px;
+            margin: 0 2px;
+            background-color: #222;
+            color: #e0e0e0;
+            text-decoration: none;
+            border: 1px solid #333;
+        }
+        .pagination a.active {
+            background-color: #333;
+        }
+        .pagination a:hover {
+            background-color: #444;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            background-color: #1a1a1a;
+        }
+        th, td {
+            padding: 8px 10px;
+            text-align: left;
+            border: 1px solid #333;
+        }
+        th {
+            background-color: #222;
+            font-weight: bold;
+        }
+        tr:hover {
+            background-color: #252525;
+        }
+        a {
+            color: #4d8bf0;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .mirrors {
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 10px;
+        }
+        .section-title {
+            font-size: 16px;
+            margin: 15px 0 5px 0;
+            color: #ccc;
+        }
+        .stats {
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 10px;
+        }
+        .username-admin {
+            color: #ff5555;
+        }
+        .username-rich {
+            color: #55ff55;
+        }
+        .paste-header {
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #333;
+        }
+        .paste-meta {
+            font-size: 12px;
+            color: #999;
+        }
+        .paste-meta span {
+            margin-right: 15px;
+        }
+        .paste-content {
+            background-color: #1a1a1a;
+            padding: 15px;
+            border: 1px solid #333;
+            margin-bottom: 20px;
+        }
+        .paste-content pre {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            margin: 0;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 8px;
+            background-color: #222;
+            color: #e0e0e0;
+            border: 1px solid #333;
+        }
+        .form-group textarea {
+            min-height: 300px;
+            font-family: monospace;
+        }
+        button {
+            padding: 8px 15px;
+            background-color: #333;
+            color: #e0e0e0;
+            border: 1px solid #444;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #444;
+        }
+        #home-view, #add-paste-view, #paste-view {
+            display: none;
+        }
+        #home-view.active, #add-paste-view.active, #paste-view.active {
+            display: block;
+        }
+        .network-status {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            padding: 8px 12px;
+            background-color: #333;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+        .network-status.connected {
+            background-color: #2e7d32;
+        }
+        .network-status.disconnected {
+            background-color: #c62828;
+        }
+        .peer-count {
+            margin-left: 5px;
+            font-weight: bold;
+        }
+        .sync-progress {
+            margin-top: 10px;
+            font-size: 12px;
+            color: #999;
+        }
+        .network-menu {
+            position: relative;
+            display: inline-block;
+        }
+        .network-dropdown {
+            display: none;
+            position: absolute;
+            bottom: 100%;
+            right: 0;
+            background-color: #222;
+            min-width: 200px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+            padding: 10px;
+            border: 1px solid #333;
+        }
+        .network-menu:hover .network-dropdown {
+            display: block;
+        }
+        .peer-list {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .peer-item {
+            padding: 5px;
+            border-bottom: 1px solid #333;
             background-color: black;
             color: white;
             font-family: monospace;
