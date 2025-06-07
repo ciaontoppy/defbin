@@ -57,6 +57,48 @@
         th {
             background-color: #111;
         }
+                }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <nav>
+                <h1>FedBin</h1>
+                <div class="nav-links">
+                    <a href="#" onclick="showView('home')">Home</a>
+                    <a href="#" onclick="showView('add-paste')">Add Paste</a>
+                    <a href="#" onclick="showView('users')">Users</a>
+                    <a href="#">Upgrades</a>
+                    <a href="#">Support</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Home View -->
+        <div id="home-view" class="active">
+            <div class="mirrors">
+                <strong>FEDBIN NETWORK</strong><br>
+                Nodes: <span id="node-count">0</span> | Peers: <span id="peer-count">0</span>
+            </div>
+
+            <div class="search-box">
+                <input type="text" id="search-input" placeholder="Search for..." onkeyup="if(event.key === 'Enter') searchPastes()">
+                <button onclick="searchPastes()">Search for a paste</button>
+            </div>
+
+            <div class="stats" id="stats">
+                Loading pastes...
+            </div>
+
+            <div class="pagination" id="pagination">
+                <a href="#" onclick="changePage(-1)"><</a>
+                <a href="#" class="active">1</a>
+                <a href="#" onclick="changePage(1)">></a>
+            </div>
+
     </style>
 </head>
 <body>
