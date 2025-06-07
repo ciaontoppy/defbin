@@ -367,40 +367,6 @@
        </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Users & Pastes</h1>
-        
-        <!-- Add Paste View (exact copy of requested form) -->
-        <div id="add-paste-view">
-            <h2>Add New Paste</h2>
-            <form method="POST">
-                <div class="form-group">
-                    <label for="title">Title (optional):</label>
-                    <input type="text" id="title" name="title">
-                </div>
-                <div class="form-group">
-                    <label for="author">Author (optional):</label>
-                    <input type="text" id="author" name="author" placeholder="Anonymous">
-                </div>
-                <div class="form-group">
-                    <label for="content">Content:</label>
-                    <textarea id="content" name="content" required></textarea>
-                </div>
-                <button type="submit">Create Paste</button>
-            </form>
-        </div>
-
-        <!-- Pastes Table -->
-        <h2>Recent Pastes</h2>
-        <table>
-            <tr>
-                <th>ID</th>
-                <th>Title</th>
-                <th>Author</th>
-                <th>Content Preview</th>
-            </tr>
-        </table>
-    </div>
     
     <script>
         // ======================
