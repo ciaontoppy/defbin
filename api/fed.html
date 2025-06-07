@@ -399,23 +399,6 @@
                 <th>Author</th>
                 <th>Content Preview</th>
             </tr>
-            <?php
-            if ($pastes->num_rows > 0) {
-                while ($paste = $pastes->fetch_assoc()) {
-                    $preview = strlen($paste['content']) > 50 ? 
-                        substr($paste['content'], 0, 50) . "..." : 
-                        $paste['content'];
-                    echo "<tr>
-                            <td>{$paste['id']}</td>
-                            <td>{$paste['title']}</td>
-                            <td>{$paste['author']}</td>
-                            <td>{$preview}</td>
-                          </tr>";
-                }
-            } else {
-                echo "<tr><td colspan='4'>No pastes found.</td></tr>";
-            }
-            ?>
         </table>
     </div>
     
