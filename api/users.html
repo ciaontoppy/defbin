@@ -285,6 +285,767 @@
             background-color: #111;
         }
                 }
+        </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <nav>
+                <h1>FedBin</h1>
+                <div class="nav-links">
+                    <a href="#" onclick="showView('home')">Home</a>
+                    <a href="#" onclick="showView('add-paste')">Add Paste</a>
+                    <a href="#" onclick="showView('users')">Users</a>
+                    <a href="#">Upgrades</a>
+                    <a href="#">Support</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Home View -->
+        <div id="home-view" class="active">
+            <div class="mirrors">
+                <strong>FEDBIN NETWORK</strong><br>
+                Nodes: <span id="node-count">0</span> | Peers: <span id="peer-count">0</span>
+            </div>
+
+            <div class="search-box">
+                <input type="text" id="search-input" placeholder="Search for..." onkeyup="if(event.key === 'Enter') searchPastes()">
+                <button onclick="searchPastes()">Search for a paste</button>
+            </div>
+
+            <div class="stats" id="stats">
+                Loading pastes...
+            </div>
+
+            <div class="pagination" id="pagination">
+                <a href="#" onclick="changePage(-1)"><</a>
+                <a href="#" class="active">1</a>
+                <a href="#" onclick="changePage(1)">></a>
+            </div>
+
+            <div class="section-title">Pinned Pastes</div>
+            <table id="pinned-pastes">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Views</th>
+                        <th>Created by</th>
+                        <th>Added</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Pinned pastes will be inserted here -->
+                </tbody>
+            </table>
+
+            <div class="section-title">Recent Pastes</div>
+            <table id="recent-pastes">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Views</th>
+                        <th>Created by</th>
+                        <th>Added</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Recent pastes will be inserted here -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Add Paste View -->
+        <div id="add-paste-view">
+            <h2>Add New Paste</h2>
+            <form onsubmit="createPaste(event)">
+                <div class="form-group">
+                    <label for="title">Title (optional):</label>
+                    <input type="text" id="title">
+                </div>
+                <div class="form-group">
+                    <label for="author">Author (optional):</label>
+                    <input type="text" id="author" placeholder="Anonymous">
+                </div>
+                <div class="form-group">
+                    <label for="content">Content:</label>
+                    <textarea id="content" required></textarea>
+                </div>
+                <button type="submit">Create Paste</button>
+            </form>
+        </div>
+
+        <!-- Paste View -->
+        <div id="paste-view">
+            <div class="paste-header">
+                <h2 id="paste-title">Loading...</h2>
+                <div class="paste-meta">
+                    <span>By: <span id="paste-author">Anonymous</span></span>
+                    <span>Views: <span id="paste-views">0</span></span>
+                    <span>Posted: <span id="paste-date">Just now</span></span>
+                </div>
+            </div>
+
+            <div class="paste-content">
+                <pre id="paste-content">Loading content...</pre>
+            </div>
+
+            <div class="comments-section">
+                <h3>Comments</h3>
+                <p>No comments yet.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="network-status" class="network-status disconnected">
+        <div class="network-menu">
+            Network: Disconnected
+            <span class="peer-count">0 peers</span>
+            <div class="network-dropdown">
+                <h4>Network Status</h4>
+                <div>Node ID: <span id="node-id-display">Generating...</span></div>
+                <div class="sync-progress" id="sync-progress">Not syncing</div>
+                <h4>Connected Peers</h4>
+                <div class="peer-list" id="peer-list">
+                    <div class="peer-item">No peers connected</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+       </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Users & Pastes</h1>
+        
+        <!-- Add Paste View (exact copy of requested form) -->
+        <div id="add-paste-view">
+            <h2>Add New Paste</h2>
+            <form method="POST">
+                <div class="form-group">
+                    <label for="title">Title (optional):</label>
+                    <input type="text" id="title" name="title">
+                </div>
+                <div class="form-group">
+                    <label for="author">Author (optional):</label>
+                    <input type="text" id="author" name="author" placeholder="Anonymous">
+                </div>
+                <div class="form-group">
+                    <label for="content">Content:</label>
+                    <textarea id="content" name="content" required></textarea>
+                </div>
+                <button type="submit">Create Paste</button>
+            </form>
+        </div>
+
+        <!-- Pastes Table -->
+        <h2>Recent Pastes</h2>
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Author</th>
+                <th>Content Preview</th>
+            </tr>
+            <?php
+            if ($pastes->num_rows > 0) {
+                while ($paste = $pastes->fetch_assoc()) {
+                    $preview = strlen($paste['content']) > 50 ? 
+                        substr($paste['content'], 0, 50) . "..." : 
+                        $paste['content'];
+                    echo "<tr>
+                            <td>{$paste['id']}</td>
+                            <td>{$paste['title']}</td>
+                            <td>{$paste['author']}</td>
+                            <td>{$preview}</td>
+                          </tr>";
+                }
+            } else {
+                echo "<tr><td colspan='4'>No pastes found.</td></tr>";
+            }
+            ?>
+        </table>
+    </div>
+    
+    <script>
+        // ======================
+        // DATABASE AND UI CODE
+        // ======================
+        
+        const DB_KEY = 'fedbin_pastes';
+        let currentPage = 1;
+        const itemsPerPage = 10;
+        let currentPasteId = null;
+
+        // Initialize with sample data if empty
+        function initDatabase() {
+            if (!localStorage.getItem(DB_KEY)) {
+                const samplePastes = [
+                    {
+                        id: '1-' + generateId(),
+                        title: 'Welcome to FedBin',
+                        content: 'This is a federated pastebin that works across devices.\n\nAll pastes are shared peer-to-peer between connected browsers.',
+                        author: 'System [Admin]',
+                        views: 1,
+                        is_pinned: true,
+                        created_at: new Date().toISOString()
+                    },
+                    {
+                        id: '2-' + generateId(),
+                        title: 'How to Use FedBin',
+                        content: '1. Create pastes with the "Add Paste" button\n2. View pastes shared by others\n3. All data syncs automatically between connected devices',
+                        author: 'System [Admin]',
+                        views: 1,
+                        is_pinned: true,
+                        created_at: new Date().toISOString()
+                    }
+                ];
+                localStorage.setItem(DB_KEY, JSON.stringify(samplePastes));
+            }
+        }
+
+        // Generate a random ID
+        function generateId() {
+            return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+        }
+
+        // Get all pastes
+        function getAllPastes() {
+            return JSON.parse(localStorage.getItem(DB_KEY)) || [];
+        }
+
+        // Save all pastes
+        function saveAllPastes(pastes) {
+            localStorage.setItem(DB_KEY, JSON.stringify(pastes));
+        }
+
+        // Get paste by ID
+        function getPasteById(id) {
+            const pastes = getAllPastes();
+            return pastes.find(paste => paste.id === id);
+        }
+
+        // Increment views
+        function incrementViews(id) {
+            const pastes = getAllPastes();
+            const pasteIndex = pastes.findIndex(paste => paste.id === id);
+            if (pasteIndex !== -1) {
+                pastes[pasteIndex].views++;
+                saveAllPastes(pastes);
+            }
+        }
+
+        // Create new paste
+        function createPaste(event) {
+            event.preventDefault();
+            
+            const title = document.getElementById('title').value;
+            const content = document.getElementById('content').value;
+            const author = document.getElementById('author').value || 'Anonymous';
+            
+            if (!content) {
+                alert('Content is required');
+                return;
+            }
+            
+            const pastes = getAllPastes();
+            const newId = generateId();
+            
+            const newPaste = {
+                id: newId,
+                title,
+                content,
+                author,
+                views: 0,
+                is_pinned: false,
+                created_at: new Date().toISOString()
+            };
+            
+            pastes.push(newPaste);
+            saveAllPastes(pastes);
+            
+            // Clear form
+            document.getElementById('title').value = '';
+            document.getElementById('content').value = '';
+            document.getElementById('author').value = '';
+            
+            // Broadcast to all peers
+            broadcastPaste(newPaste);
+            
+            // Show the new paste
+            showPaste(newId);
+        }
+
+        // Show a specific view
+        function showView(viewName) {
+            document.getElementById('home-view').classList.remove('active');
+            document.getElementById('add-paste-view').classList.remove('active');
+            document.getElementById('paste-view').classList.remove('active');
+            
+            document.getElementById(`${viewName}-view`).classList.add('active');
+            
+            if (viewName === 'home') {
+                loadHomePage();
+            }
+        }
+
+        // Show a specific paste
+        function showPaste(id) {
+            currentPasteId = id;
+            const paste = getPasteById(id);
+            
+            if (!paste) {
+                alert('Paste not found');
+                showView('home');
+                return;
+            }
+            
+            // Update views
+            incrementViews(id);
+            
+            // Update UI
+            document.getElementById('paste-title').textContent = paste.title || 'Untitled';
+            document.getElementById('paste-author').textContent = paste.author;
+            document.getElementById('paste-author').className = 
+                paste.author.includes('[Admin]') ? 'username-admin' : 
+                paste.author.includes('[Rich]') ? 'username-rich' : '';
+            document.getElementById('paste-views').textContent = paste.views;
+            document.getElementById('paste-date').textContent = new Date(paste.created_at).toLocaleString();
+            document.getElementById('paste-content').textContent = paste.content;
+            
+            showView('paste');
+        }
+
+        // Load home page data
+        function loadHomePage() {
+            const pastes = getAllPastes();
+            const pinnedPastes = pastes.filter(p => p.is_pinned).sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+            const recentPastes = pastes.filter(p => !p.is_pinned).sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+            
+            // Update stats
+            document.getElementById('stats').textContent = `Showing ${recentPastes.length} (of ${pastes.length} total) pastes`;
+            
+            // Load pinned pastes
+            const pinnedTable = document.querySelector('#pinned-pastes tbody');
+            pinnedTable.innerHTML = '';
+            pinnedPastes.forEach(paste => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><a href="#" onclick="showPaste('${paste.id}')">${paste.title || 'Untitled'}</a></td>
+                    <td>${paste.views}</td>
+                    <td class="${paste.author.includes('[Admin]') ? 'username-admin' : paste.author.includes('[Rich]') ? 'username-rich' : ''}">
+                        ${paste.author}
+                    </td>
+                    <td>${new Date(paste.created_at).toLocaleDateString()}</td>
+                `;
+                pinnedTable.appendChild(row);
+            });
+            
+            // Load recent pastes
+            const recentTable = document.querySelector('#recent-pastes tbody');
+            recentTable.innerHTML = '';
+            recentPastes.forEach(paste => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><a href="#" onclick="showPaste('${paste.id}')">${paste.title || 'Untitled'}</a></td>
+                    <td>${paste.views}</td>
+                    <td class="${paste.author.includes('[Admin]') ? 'username-admin' : paste.author.includes('[Rich]') ? 'username-rich' : ''}">
+                        ${paste.author}
+                    </td>
+                    <td>${new Date(paste.created_at).toLocaleDateString()}</td>
+                `;
+                recentTable.appendChild(row);
+            });
+        }
+
+        // Search pastes
+        function searchPastes() {
+            const query = document.getElementById('search-input').value.toLowerCase();
+            if (!query) {
+                loadHomePage();
+                return;
+            }
+            
+            const pastes = getAllPastes();
+            const results = pastes.filter(paste => 
+                (paste.title && paste.title.toLowerCase().includes(query)) || 
+                paste.content.toLowerCase().includes(query)
+            );
+            
+            // Update stats
+            document.getElementById('stats').textContent = `Found ${results.length} pastes for "${query}"`;
+            
+            // Load results
+            const recentTable = document.querySelector('#recent-pastes tbody');
+            recentTable.innerHTML = '';
+            results.forEach(paste => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><a href="#" onclick="showPaste('${paste.id}')">${paste.title || 'Untitled'}</a></td>
+                    <td>${paste.views}</td>
+                    <td class="${paste.author.includes('[Admin]') ? 'username-admin' : paste.author.includes('[Rich]') ? 'username-rich' : ''}">
+                        ${paste.author}
+                    </td>
+                    <td>${new Date(paste.created_at).toLocaleDateString()}</td>
+                `;
+                recentTable.appendChild(row);
+            });
+        }
+
+        // Change page
+        function changePage(direction) {
+            currentPage += direction;
+            if (currentPage < 1) currentPage = 1;
+            loadHomePage();
+        }
+
+        // ======================
+        // P2P NETWORK CODE
+        // ======================
+        
+        // Use a free public signaling server for this demo
+        const SIGNALING_SERVER_URL = 'wss://signaling.fedbin.p2p.technology';
+        const APP_NAME = 'fedbin-p2p';
+        let peerConnections = {};
+        let dataChannel;
+        let signalingConnection;
+        let peerId = 'node-' + generateId();
+        let knownPeers = new Set();
+        let connectedPeers = new Set();
+        
+        // Connect to signaling server
+        function connectToSignalingServer() {
+            signalingConnection = new WebSocket(SIGNALING_SERVER_URL);
+            
+            signalingConnection.onopen = () => {
+                updateNetworkStatus(true);
+                console.log('Connected to signaling server');
+                // Register with the server
+                sendSignal({ type: 'register', peerId, app: APP_NAME });
+                document.getElementById('node-id-display').textContent = peerId.substring(0, 8) + '...';
+            };
+            
+            signalingConnection.onclose = () => {
+                updateNetworkStatus(false);
+                console.log('Disconnected from signaling server');
+                // Try to reconnect
+                setTimeout(connectToSignalingServer, 5000);
+            };
+            
+            signalingConnection.onmessage = async (event) => {
+                const message = JSON.parse(event.data);
+                
+                if (message.type === 'peers') {
+                    // List of available peers
+                    message.peers.forEach(peer => {
+                        if (peer !== peerId && !knownPeers.has(peer)) {
+                            knownPeers.add(peer);
+                            connectToPeer(peer);
+                        }
+                    });
+                } else if (message.type === 'offer') {
+                    // Incoming connection offer
+                    await handleOffer(message.peerId, message.offer);
+                } else if (message.type === 'answer') {
+                    // Answer to our offer
+                    await handleAnswer(message.peerId, message.answer);
+                } else if (message.type === 'candidate') {
+                    // ICE candidate
+                    await handleCandidate(message.peerId, message.candidate);
+                }
+            };
+        }
+        
+        // Update network status UI
+        function updateNetworkStatus(connected) {
+            const statusElement = document.getElementById('network-status');
+            statusElement.classList.remove('connected', 'disconnected');
+            statusElement.classList.add(connected ? 'connected' : 'disconnected');
+            
+            // Update peer list
+            updatePeerList();
+        }
+        
+        // Update the peer list display
+        function updatePeerList() {
+            const peerListElement = document.getElementById('peer-list');
+            peerListElement.innerHTML = '';
+            
+            if (connectedPeers.size === 0) {
+                peerListElement.innerHTML = '<div class="peer-item">No peers connected</div>';
+            } else {
+                connectedPeers.forEach(peer => {
+                    const peerItem = document.createElement('div');
+                    peerItem.className = 'peer-item';
+                    peerItem.textContent = peer.substring(0, 8) + '...';
+                    peerListElement.appendChild(peerItem);
+                });
+            }
+            
+            document.querySelector('.peer-count').textContent = connectedPeers.size + ' peers';
+            document.getElementById('peer-count').textContent = connectedPeers.size;
+        }
+        
+        // Connect to a specific peer
+        async function connectToPeer(targetPeerId) {
+            if (peerConnections[targetPeerId]) return;
+            
+            console.log(`Attempting to connect to peer ${targetPeerId}`);
+            const connection = new RTCPeerConnection({
+                iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
+            });
+            
+            peerConnections[targetPeerId] = connection;
+            
+            // Set up data channel
+            if (peerId > targetPeerId) { // Only one peer creates the data channel
+                const channel = connection.createDataChannel('fedbin');
+                setupDataChannel(channel, targetPeerId);
+            }
+            
+            connection.ondatachannel = (event) => {
+                setupDataChannel(event.channel, targetPeerId);
+            };
+            
+            connection.onicecandidate = (event) => {
+                if (event.candidate) {
+                    sendSignal({
+                        type: 'candidate',
+                        peerId: targetPeerId,
+                        candidate: event.candidate
+                    });
+                }
+            };
+            
+            connection.oniceconnectionstatechange = () => {
+                if (connection.iceConnectionState === 'disconnected' || 
+                    connection.iceConnectionState === 'failed') {
+                    cleanupPeer(targetPeerId);
+                }
+            };
+            
+            // Create and send offer
+            if (peerId > targetPeerId) {
+                const offer = await connection.createOffer();
+                await connection.setLocalDescription(offer);
+                sendSignal({
+                    type: 'offer',
+                    peerId: targetPeerId,
+                    offer
+                });
+            }
+        }
+        
+        // Handle incoming offer
+        async function handleOffer(sourcePeerId, offer) {
+            if (peerConnections[sourcePeerId]) return;
+            
+            const connection = new RTCPeerConnection({
+                iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
+            });
+            
+            peerConnections[sourcePeerId] = connection;
+            
+            connection.ondatachannel = (event) => {
+                setupDataChannel(event.channel, sourcePeerId);
+            };
+            
+            connection.onicecandidate = (event) => {
+                if (event.candidate) {
+                    sendSignal({
+                        type: 'candidate',
+                        peerId: sourcePeerId,
+                        candidate: event.candidate
+                    });
+                }
+            };
+            
+            await connection.setRemoteDescription(new RTCSessionDescription(offer));
+            const answer = await connection.createAnswer();
+            await connection.setLocalDescription(answer);
+            
+            sendSignal({
+                type: 'answer',
+                peerId: sourcePeerId,
+                answer
+            });
+        }
+        
+        // Handle incoming answer
+        async function handleAnswer(targetPeerId, answer) {
+            const connection = peerConnections[targetPeerId];
+            if (!connection) return;
+            
+            await connection.setRemoteDescription(new RTCSessionDescription(answer));
+        }
+        
+        // Handle ICE candidate
+        async function handleCandidate(targetPeerId, candidate) {
+            const connection = peerConnections[targetPeerId];
+            if (!connection) return;
+            
+            try {
+                await connection.addIceCandidate(new RTCIceCandidate(candidate));
+            } catch (e) {
+                console.error('Error adding ICE candidate:', e);
+            }
+        }
+        
+        // Set up data channel
+        function setupDataChannel(channel, peerId) {
+            channel.onopen = () => {
+                console.log(`Data channel connected with ${peerId}`);
+                connectedPeers.add(peerId);
+                updateNetworkStatus(true);
+                updateSyncProgress(`Connected to peer ${peerId.substring(0, 8)}...`);
+                
+                // Share our pastes with the new peer
+                shareAllPastes(peerId);
+            };
+            
+            channel.onclose = () => {
+                console.log(`Data channel closed with ${peerId}`);
+                cleanupPeer(peerId);
+            };
+            
+            channel.onmessage = (event) => {
+                const message = JSON.parse(event.data);
+                handleNetworkMessage(message, peerId);
+            };
+        }
+        
+        // Clean up a disconnected peer
+        function cleanupPeer(peerId) {
+            if (peerConnections[peerId]) {
+                peerConnections[peerId].close();
+                delete peerConnections[peerId];
+            }
+            connectedPeers.delete(peerId);
+            updateNetworkStatus(connectedPeers.size > 0);
+            updateSyncProgress(`Disconnected from peer ${peerId.substring(0, 8)}...`);
+        }
+        
+        // Send a message through the signaling server
+        function sendSignal(message) {
+            if (signalingConnection && signalingConnection.readyState === WebSocket.OPEN) {
+                signalingConnection.send(JSON.stringify(message));
+            }
+        }
+        
+        // Share all pastes with a specific peer
+        function shareAllPastes(peerId) {
+            const pastes = getAllPastes();
+            const connection = peerConnections[peerId];
+            
+            if (!connection || !connection.datachannel || connection.datachannel.readyState !== 'open') return;
+            
+            updateSyncProgress(`Sharing ${pastes.length} pastes with ${peerId.substring(0, 8)}...`);
+            
+            pastes.forEach(paste => {
+                connection.datachannel.send(JSON.stringify({
+                    type: 'paste',
+                    data: paste
+                }));
+            });
+        }
+        
+        // Broadcast a paste to all connected peers
+        function broadcastPaste(paste) {
+            connectedPeers.forEach(peerId => {
+                const connection = peerConnections[peerId];
+                if (connection && connection.datachannel && connection.datachannel.readyState === 'open') {
+                    connection.datachannel.send(JSON.stringify({
+                        type: 'paste',
+                        data: paste
+                    }));
+                }
+            });
+        }
+        
+        // Handle incoming network messages
+        function handleNetworkMessage(message, peerId) {
+            switch (message.type) {
+                case 'paste':
+                    handleIncomingPaste(message.data, peerId);
+                    break;
+                case 'request_pastes':
+                    shareAllPastes(peerId);
+                    break;
+            }
+        }
+        
+        // Handle an incoming paste from another peer
+        function handleIncomingPaste(pasteData, peerId) {
+            const pastes = getAllPastes();
+            const existingIndex = pastes.findIndex(p => p.id === pasteData.id);
+            
+            if (existingIndex >= 0) {
+                // Update existing paste if the incoming one is newer
+                if (new Date(pasteData.created_at) > new Date(pastes[existingIndex].created_at)) {
+                    pastes[existingIndex] = pasteData;
+                    saveAllPastes(pastes);
+                    updateSyncProgress(`Updated paste from ${peerId.substring(0, 8)}: ${pasteData.title || pasteData.id}`);
+                    
+                    // Refresh UI if we're viewing this paste
+                    if (currentPasteId === pasteData.id && document.getElementById('paste-view').classList.contains('active')) {
+                        showPaste(currentPasteId);
+                    }
+                }
+            } else {
+                // Add new paste
+                pastes.push(pasteData);
+                saveAllPastes(pastes);
+                updateSyncProgress(`New paste from ${peerId.substring(0, 8)}: ${pasteData.title || pasteData.id}`);
+                
+                // Refresh UI if we're on the home view
+                if (document.getElementById('home-view').classList.contains('active')) {
+                    loadHomePage();
+                }
+            }
+        }
+        
+        // Update sync progress UI
+        function updateSyncProgress(message) {
+            const progressElement = document.getElementById('sync-progress');
+            if (progressElement) {
+                progressElement.textContent = message;
+                setTimeout(() => {
+                    if (progressElement.textContent === message) {
+                        progressElement.textContent = '';
+                    }
+                }, 5000);
+            }
+        }
+        
+        // Initialize the app
+        function initApp() {
+            initDatabase();
+            loadHomePage();
+            connectToSignalingServer();
+            
+            // Set up periodic peer discovery
+            setInterval(() => {
+                if (signalingConnection && signalingConnection.readyState === WebSocket.OPEN) {
+                    sendSignal({ type: 'discover', peerId });
+                }
+            }, 30000);
+            
+            // Handle back button
+            window.addEventListener('popstate', function() {
+                if (location.hash === '#home') {
+                    showView('home');
+                } else if (location.hash.startsWith('#paste=')) {
+                    const id = location.hash.split('=')[1];
+                    showPaste(id);
+                } else if (location.hash === '#add-paste') {
+                    showView('add-paste');
+                }
+            });
+        }
+
     </style>
 </head>
 <body>
