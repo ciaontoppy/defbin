@@ -1,180 +1,143 @@
-<?php
-// Database connection (no security - survival first)
-$conn = new mysqli("localhost", "root", "", "doxbin_db");
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
-?>
-
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Doxbin Users</title>
+    <title>Users</title>
     <style>
-        :root {
-            --bg-dark: #0d0d0d;
-            --bg-light: #111;
-            --text: #ccc;
-            --accent: #ff6600;
-            --border: #222;
-        }
         body {
-            font-family: 'Courier New', monospace;
-            background: var(--bg-dark);
-            color: var(--text);
+            background-color: black;
+            color: white;
+            font-family: monospace;
             margin: 0;
             padding: 20px;
-            font-size: 14px;
+            text-align: center;
         }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            width: 80%;
+            margin-left: auto;
+            margin-right: auto;
         }
-        h1 {
-            color: var(--accent);
-            border-bottom: 1px solid var(--border);
-            padding-bottom: 10px;
+        .search-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .search-input {
+            background: black;
+            color: white;
+            border: 1px solid #333;
+            padding: 5px;
+            font-family: monospace;
+            width: 200px;
+        }
+        .search-button {
+            background: black;
+            color: white;
+            border: 1px solid #333;
+            padding: 5px 10px;
+            font-family: monospace;
+            cursor: pointer;
+        }
+        .status {
+            margin: 15px 0;
         }
         table {
-            width: 100%;
+            width: 80%;
+            margin: 0 auto;
             border-collapse: collapse;
-            margin: 20px 0;
         }
         th, td {
-            padding: 8px 12px;
-            border: 1px solid var(--border);
+            padding: 8px;
+            border: 1px solid #333;
             text-align: left;
         }
         th {
-            background: var(--bg-light);
-            font-weight: bold;
-        }
-        .section-header {
-            background: #1a1a1a;
-            font-weight: bold;
-            color: var(--accent);
-        }
-        .status-bar {
-            text-align: center;
-            padding: 5px;
-            background: var(--bg-light);
-            border: 1px solid var(--border);
-            margin-bottom: 20px;
+            background-color: #111;
         }
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="header">
         <h1>Users</h1>
-        
-        <table>
-            <tr>
-                <th>Admin</th>
-                <th>Username</th>
-                <th>Search</th>
-            </tr>
-            <tr>
-                <td colspan="3" class="status-bar">Showing 180 (of 400) users</td>
-            </tr>
-        </table>
-
-        <!-- Admin Section -->
-        <table>
-            <tr class="section-header">
-                <td colspan="5">Admin</td>
-            </tr>
-            <tr>
-                <th>ID</th>
-                <th>Username</th>
-                <th>Passes</th>
-                <th>Comments</th>
-                <th>Joined</th>
-            </tr>
-            <tr>
-                <td>0</td>
-                <td>Admin</td>
-                <td>2</td>
-                <td>0</td>
-                <td>Sep 11, 2001</td>
-            </tr>
-        </table>
-
-        <!-- Manager Section -->
-        <table>
-            <tr class="section-header">
-                <td colspan="5">Manager</td>
-            </tr>
-            <tr>
-                <th>ID</th>
-                <th>Username</th>
-                <th>Passes</th>
-                <th>Comments</th>
-                <th>Joined</th>
-            </tr>
-            <tr>
-                <td>7819</td>
-                <td>CEO</td>
-                <td>0</td>
-                <td>25</td>
-                <td>Jun 24, 2020</td>
-            </tr>
-            <tr>
-                <td>306178</td>
-                <td>Initialize</td>
-                <td>0</td>
-                <td>60</td>
-                <td>Apr 5, 2023</td>
-            </tr>
-        </table>
-
-        <!-- Mod Section -->
-        <table>
-            <tr class="section-header">
-                <td colspan="5">Mod</td>
-            </tr>
-            <tr>
-                <th>ID</th>
-                <th>Username</th>
-                <th>Passes</th>
-                <th>Comments</th>
-                <th>Joined</th>
-            </tr>
-            <tr>
-                <td>6</td>
-                <td>zz</td>
-                <td>0</td>
-                <td>13</td>
-                <td>Aug 25, 2019</td>
-            </tr>
-            <tr>
-                <td>88</td>
-                <td>oz</td>
-                <td>218</td>
-                <td>3501</td>
-                <td>Apr 21, 2019</td>
-            </tr>
-            <tr>
-                <td>2204</td>
-                <td>ww</td>
-                <td>0</td>
-                <td>0</td>
-                <td>Oct 19, 2019</td>
-            </tr>
-            <tr>
-                <td>8826</td>
-                <td>month</td>
-                <td>1</td>
-                <td>10</td>
-                <td>Jul 9, 2020</td>
-            </tr>
-            <tr>
-                <td>23796</td>
-                <td>cat</td>
-                <td>0</td>
-                <td>24</td>
-                <td>Feb 10, 2021</td>
-            </tr>
-        </table>
+        <div class="search-container">
+            <span>Username...</span>
+            <input type="text" class="search-input" id="searchInput" placeholder="">
+            <button class="search-button" onclick="searchUsers()">Search</button>
+        </div>
     </div>
+
+    <div class="status">Showing 1187 (of 410163) users</div>
+
+    <table id="usersTable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Username</th>
+                <th>Posts</th>
+                <th>Joined</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Sample data - replace with your actual user data -->
+            <tr>
+                <td>1</td>
+                <td>admin</td>
+                <td>42</td>
+                <td>Jan 1, 2020</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>moderator</td>
+                <td>35</td>
+                <td>Feb 15, 2020</td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td>user123</td>
+                <td>12</td>
+                <td>Mar 30, 2020</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <script>
+        // Sample user data (replace with your actual data)
+        const allUsers = [
+            { id: 1, username: 'Kunzi', posts: 42, joined: 'Jan 1, 2020' },
+            { id: 2, username: '1pxx', posts: 35, joined: 'Feb 15, 2020' },
+        ];
+
+        function searchUsers() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const filteredUsers = allUsers.filter(user => 
+                user.username.toLowerCase().includes(searchTerm)
+            );
+            
+            const tableBody = document.querySelector('#usersTable tbody');
+            tableBody.innerHTML = '';
+            
+            filteredUsers.forEach(user => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${user.id}</td>
+                    <td>${user.username}</td>
+                    <td>${user.posts}</td>
+                    <td>${user.joined}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+            
+            document.querySelector('.status').textContent = 
+                `Showing ${filteredUsers.length} (of ${allUsers.length}) users`;
+        }
+
+        // Initialize with all users
+        window.onload = function() {
+            searchUsers();
+        };
+    </script>
 </body>
 </html>
