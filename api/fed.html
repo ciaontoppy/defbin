@@ -1,4 +1,5 @@
-                                                add that code to this code <!DOCTYPE html>
+keep this exact code still but just make it so everyone can see everyones paste 
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -246,24 +247,20 @@
                     <a href="#" onclick="showView('add-paste')">Add Paste</a>
                     <a href="#">Users</a>
                     <a href="#">Upgrades</a>
-                    <a href="#"> onclick="showView('support')"Support</a>
+                    <a href="#">Support</a>
                 </div>
             </nav>
         </div>
     </header>
-    
-    </style>
-    <!-- Custom CSS Ends here -->
-</head>
-<body>
-
+  
+  <body>
 
     <div class="col-md-12">
         <div class="col-md-12" style="margin-top: 60px;float:none;">
             <div align="center">
 
                 <pre
-                      style="font: 4px/6px monospace; background-color: ; overflow-x: hidden; overflow-y: hidden; border: none; color: white;">                  
+                    style="font: 4px/6px monospace; background-color: ; overflow-x: hidden; overflow-y: hidden; border: none; color: white;">
                                                                            @                                                     
                                                                          . @ .                                                     
                                                                   @%,   % @ @.&    &%                                                 
@@ -316,15 +313,16 @@
                                                                          #   /                     /                                                  
                                                                            #                                                             
                 </pre>
-                <a href="https://discord.gg/tmpUsvezah" target="_blank" style="font-size: 26px; color: #24A1DE; text-decoration: underline;">JOIN FEDBIN DISCORD</a>
 
+<a href="https://discord.gg/tmpUsvezah" target="_blank" style="font-size: 26px; color: #24A1DE; text-decoration: underline;">JOIN FEDBIN DISCORD</a>
+                        </a>
+                    </u>
 <h5 class="announcement a-1" style="color:#CC0000;">
                     <u>
                             Mirrors: Fedbin.com | Fedbin.net
-                        </a>
+                        
                     </u>
                 </h5>
-
 
     <div class="container">
         <!-- Home View -->
@@ -360,29 +358,6 @@
                     </tr>
                 </thead>
                 <tbody>
-
-                          <!-- Add Paste View -->
-        <div id="add-view" class="view-switcher">
-            <h2>Create New Paste</h2>
-            <div>
-                <input type="text" id="paste-title" placeholder="Title (optional)" style="width:100%;padding:10px;margin-bottom:10px;">
-                <textarea id="paste-content" style="width:100%;height:300px;padding:10px;background:#222;color:#fff;border:1px solid #333;"></textarea>
-                <input type="text" id="paste-author" placeholder="Author (optional)" style="width:100%;padding:10px;margin-top:10px;">
-                <button onclick="createPaste()" style="margin-top:10px;padding:10px 20px;">Create Paste</button>
-            </div>
-        </div>
-
-        <!-- View Paste -->
-        <div id="paste-view" class="view-switcher">
-            <h2 id="view-paste-title"></h2>
-            <div class="paste-meta">
-                <span>By: <span id="view-paste-author"></span></span>
-                <span> | Date: <span id="view-paste-date"></span></span>
-                <span> | Views: <span id="view-paste-views"></span></span>
-            </div>
-            <div class="paste-content" id="view-paste-content"></div>
-            <button onclick="showView('home')" style="padding:10px 20px;">Back to List</button>
-        </div>
                     <!-- Pinned pastes will be inserted here -->
                 </tbody>
             </table>
@@ -403,7 +378,48 @@
             </table>
         </div>
 
-        
+        <!-- Add Paste View -->
+        <div id="add-paste-view">
+            <h2>Add New Paste</h2>
+            <form onsubmit="createPaste(event)">
+                <div class="form-group">
+                    <label for="title">Title (optional):</label>
+                    <input type="text" id="title">
+                </div>
+                <div class="form-group">
+                    <label for="author">Author (optional):</label>
+                    <input type="text" id="author" placeholder="Anonymous">
+                </div>
+                <div class="form-group">
+                    <label for="content">Content:</label>
+                    <textarea id="content" required></textarea>
+                </div>
+                <button type="submit">Create Paste</button>
+            </form>
+        </div>
+
+        <!-- Paste View -->
+        <div id="paste-view">
+            <div class="paste-header">
+                <h2 id="paste-title">Loading...</h2>
+                <div class="paste-meta">
+                    <span>By: <span id="paste-author">Anonymous</span></span>
+                    <span>Views: <span id="paste-views">0</span></span>
+                    <span>Posted: <span id="paste-date">Just now</span></span>
+                </div>
+            </div>
+
+            <div class="paste-content">
+                <pre id="paste-content">Loading content...</pre>
+            </div>
+
+            <div class="comments-section">
+                <h3>Comments</h3>
+                <p>No comments yet.</p>
+            </div>
+        </div>
+    </div>
+
     <div id="network-status" class="network-status disconnected">
         <div class="network-menu">
             Network: Disconnected
